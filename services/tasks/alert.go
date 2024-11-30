@@ -5,6 +5,7 @@ import (
 	"embed"
 	"fmt"
 	"net/http"
+	"net/url"
 	"strconv"
 	"text/template"
 
@@ -168,7 +169,22 @@ func (t *TaskRunner) sendTelegramAlert() {
 	if telegramApiUrl == "" {
 		telegramApiUrl = "https://api.telegram.org"
 	}
-	resp, err := http.Post(
+
+	client := &http.Client{}
+	if util.Config.TelegramProxy != "" {
+		proxyURL, err := url.Parse(util.Config.TelegramProxy)
+		if err != nil {
+			// Handle error if proxy URL is invalid
+			t.Logf("Invalid Telegram proxy URL: %v", err)
+		} else {
+			client = &http.Client{
+				Transport: &http.Transport{
+					Proxy: http.ProxyURL(proxyURL),
+				},
+			}
+		}
+	}
+	resp, err := client.Post(
 		fmt.Sprintf(
 			"%s/bot%s/sendMessage",
 			telegramApiUrl,
