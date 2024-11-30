@@ -164,10 +164,14 @@ func (t *TaskRunner) sendTelegramAlert() {
 	}
 
 	t.Log("Attempting to send telegram alert")
-
+	telegramApiUrl := util.Config.TelegramApiUrl
+	if telegramApiUrl == "" {
+		telegramApiUrl = "https://api.telegram.org"
+	}
 	resp, err := http.Post(
 		fmt.Sprintf(
-			"https://api.telegram.org/bot%s/sendMessage",
+			"%s/bot%s/sendMessage",
+			telegramApiUrl,
 			util.Config.TelegramToken,
 		),
 		"application/json",
