@@ -39,6 +39,23 @@ type alertChat struct {
 	ID string
 }
 
+func (t *TaskRunner) httpClient() *http.Client {
+	if util.Config.MessengerProxy != "" {
+		proxyURL, err := url.Parse(util.Config.MessengerProxy)
+		if err != nil {
+			// Handle error if proxy URL is invalid
+			t.Logf("Invalid proxy URL(%s): %v", util.Config.MessengerProxy, err)
+		} else {
+			return &http.Client{
+				Transport: &http.Transport{
+					Proxy: http.ProxyURL(proxyURL),
+				},
+			}
+		}
+	}
+	return &http.Client{}
+}
+
 func (t *TaskRunner) sendMailAlert() {
 	if !util.Config.EmailAlert || !t.alert {
 		return
@@ -170,21 +187,7 @@ func (t *TaskRunner) sendTelegramAlert() {
 		telegramApiUrl = "https://api.telegram.org"
 	}
 
-	client := &http.Client{}
-	if util.Config.TelegramProxy != "" {
-		proxyURL, err := url.Parse(util.Config.TelegramProxy)
-		if err != nil {
-			// Handle error if proxy URL is invalid
-			t.Logf("Invalid Telegram proxy URL: %v", err)
-		} else {
-			client = &http.Client{
-				Transport: &http.Transport{
-					Proxy: http.ProxyURL(proxyURL),
-				},
-			}
-		}
-	}
-	resp, err := client.Post(
+	resp, err := t.httpClient().Post(
 		fmt.Sprintf(
 			"%s/bot%s/sendMessage",
 			telegramApiUrl,
@@ -247,7 +250,7 @@ func (t *TaskRunner) sendSlackAlert() {
 
 	t.Log("Attempting to send slack alert")
 
-	resp, err := http.Post(
+	resp, err := t.httpClient().Post(
 		util.Config.SlackUrl,
 		"application/json",
 		body,
@@ -306,7 +309,7 @@ func (t *TaskRunner) sendRocketChatAlert() {
 
 	t.Log("Attempting to send rocketchat alert")
 
-	resp, err := http.Post(
+	resp, err := t.httpClient().Post(
 		util.Config.RocketChatUrl,
 		"application/json",
 		body,
@@ -365,7 +368,7 @@ func (t *TaskRunner) sendMicrosoftTeamsAlert() {
 
 	t.Log("Attempting to send microsoft teams alert")
 
-	resp, err := http.Post(
+	resp, err := t.httpClient().Post(
 		util.Config.MicrosoftTeamsUrl,
 		"application/json",
 		body,
@@ -424,7 +427,7 @@ func (t *TaskRunner) sendDingTalkAlert() {
 
 	t.Log("Attempting to send dingtalk alert")
 
-	resp, err := http.Post(
+	resp, err := t.httpClient().Post(
 		util.Config.DingTalkUrl,
 		"application/json",
 		body,
@@ -483,7 +486,7 @@ func (t *TaskRunner) sendGotifyAlert() {
 
 	t.Log("Attempting to send gotify alert")
 
-	resp, err := http.Post(
+	resp, err := t.httpClient().Post(
 		fmt.Sprintf(
 			"%s/message?token=%s",
 			util.Config.GotifyUrl,
