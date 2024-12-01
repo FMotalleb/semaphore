@@ -148,8 +148,8 @@ type ConfigType struct {
 	AccessKeyEncryption string `json:"access_key_encryption,omitempty" env:"SEMAPHORE_ACCESS_KEY_ENCRYPTION"`
 
 	// generic webhook alerting
-	GenericHookAddress string            `json:"generic_hook_address,omitempty" env:"SEMAPHORE_GENERIC_HOOK_ADDRESS"`
-	GenericHookHeaders map[string]string `json:"generic_hook_headers,omitempty" env:"SEMAPHORE_GENERIC_HOOK_HEADERS"`
+	AlertWebHookAddress string            `json:"alert_webhook_address,omitempty" env:"SEMAPHORE_ALERT_WEBHOOK_ADDRESS"`
+	AlertWebHookHeaders map[string]string `json:"alert_webhook_headers,omitempty" env:"SEMAPHORE_ALERT_WEBHOOK_HEADERS"`
 
 	// email alerting
 	EmailAlert    bool   `json:"email_alert,omitempty" env:"SEMAPHORE_EMAIL_ALERT"`

@@ -57,8 +57,8 @@ func (t *TaskRunner) httpClient() *http.Client {
 	return &http.Client{}
 }
 
-func (t *TaskRunner) triggerGenericWebHook() {
-	if !t.alert || util.Config.GenericHookAddress == "" {
+func (t *TaskRunner) triggerWebHookAlert() {
+	if !t.alert || util.Config.AlertWebHookAddress == "" {
 		return
 	}
 
@@ -69,16 +69,16 @@ func (t *TaskRunner) triggerGenericWebHook() {
 		return
 	}
 
-	t.Logf("Attempting to trigger webhook '%s' with headers '%v'", util.Config.GenericHookAddress, util.Config.GenericHookHeaders)
+	t.Logf("Attempting to trigger webhook '%s' with headers '%v'", util.Config.AlertWebHookAddress, util.Config.AlertWebHookHeaders)
 
-	req, err := http.NewRequest(http.MethodPost, util.Config.GenericHookAddress, body)
+	req, err := http.NewRequest(http.MethodPost, util.Config.AlertWebHookAddress, body)
 	if err != nil {
 		t.Log("Can't create request object! Error: " + err.Error())
 		return
 	}
 
 	req.Header.Set("Content-Type", "application/json")
-	for k, v := range util.Config.GenericHookHeaders {
+	for k, v := range util.Config.AlertWebHookHeaders {
 		req.Header.Set(k, v)
 	}
 

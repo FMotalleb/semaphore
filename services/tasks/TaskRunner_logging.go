@@ -101,7 +101,7 @@ func (t *TaskRunner) SetStatus(status task_logger.TaskStatus) {
 	}
 
 	if status.IsNotifiable() {
-		t.triggerGenericWebHook()
+		t.triggerWebHookAlert()
 		t.sendTelegramAlert()
 		t.sendSlackAlert()
 		t.sendRocketChatAlert()
