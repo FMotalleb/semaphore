@@ -147,6 +147,10 @@ type ConfigType struct {
 	// for encrypting and decrypting access keys stored in database.
 	AccessKeyEncryption string `json:"access_key_encryption,omitempty" env:"SEMAPHORE_ACCESS_KEY_ENCRYPTION"`
 
+	// generic webhook alerting
+	GenericHookAddress string            `json:"generic_hook_address,omitempty" env:"SEMAPHORE_GENERIC_HOOK_ADDRESS"`
+	GenericHookHeaders map[string]string `json:"generic_hook_headers,omitempty" env:"SEMAPHORE_GENERIC_HOOK_HEADERS"`
+
 	// email alerting
 	EmailAlert    bool   `json:"email_alert,omitempty" env:"SEMAPHORE_EMAIL_ALERT"`
 	EmailSender   string `json:"email_sender,omitempty" env:"SEMAPHORE_EMAIL_SENDER"`

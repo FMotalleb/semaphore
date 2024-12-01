@@ -3,6 +3,7 @@ package tasks
 import (
 	"bytes"
 	"embed"
+	"encoding/json"
 	"fmt"
 	"net/http"
 	"net/url"
@@ -56,6 +57,41 @@ func (t *TaskRunner) httpClient() *http.Client {
 	return &http.Client{}
 }
 
+func (t *TaskRunner) triggerGenericWebHook() {
+	if !t.alert || util.Config.GenericHookAddress == "" {
+		return
+	}
+
+	body := bytes.NewBufferString("")
+
+	if err := json.NewEncoder(body).Encode(t); err != nil {
+		t.Log("Can't marshal alert to json!")
+		return
+	}
+
+	t.Logf("Attempting to trigger webhook '%s' with headers '%v'", util.Config.GenericHookAddress, util.Config.GenericHookHeaders)
+
+	req, err := http.NewRequest(http.MethodPost, util.Config.GenericHookAddress, body)
+	if err != nil {
+		t.Log("Can't create request object! Error: " + err.Error())
+		return
+	}
+
+	req.Header.Set("Content-Type", "application/json")
+	for k, v := range util.Config.GenericHookHeaders {
+		req.Header.Set(k, v)
+	}
+
+	resp, err := t.httpClient().Do(req)
+
+	if err != nil {
+		t.Log("Can't trigger webhook! Error: " + err.Error())
+	} else if resp.StatusCode != 200 {
+		t.Log("Can't trigger webhook! Response code: " + strconv.Itoa(resp.StatusCode))
+	}
+
+	t.Log("Successfully triggered webhook!")
+}
 func (t *TaskRunner) sendMailAlert() {
 	if !util.Config.EmailAlert || !t.alert {
 		return

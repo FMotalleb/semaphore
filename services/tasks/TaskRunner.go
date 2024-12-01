@@ -21,11 +21,11 @@ type Job interface {
 }
 
 type TaskRunner struct {
-	Task        db.Task
-	Template    db.Template
-	Inventory   db.Inventory
-	Repository  db.Repository
-	Environment db.Environment
+	Task        db.Task        `json:"task,omitempty"`
+	Template    db.Template    `json:"template,omitempty"`
+	Inventory   db.Inventory   `json:"inventory,omitempty"`
+	Repository  db.Repository  `json:"repository,omitempty"`
+	Environment db.Environment `json:"environments,omitempty"`
 
 	users     []int
 	alert     bool
@@ -35,9 +35,9 @@ type TaskRunner struct {
 	// job executes Ansible and returns stdout to Semaphore logs
 	job Job
 
-	RunnerID        int
-	Username        string
-	IncomingVersion *string
+	RunnerID        int     `json:"runner_id,omitempty"`
+	Username        string  `json:"username,omitempty"`
+	IncomingVersion *string `json:"version,omitempty"`
 
 	statusListeners []task_logger.StatusListener
 	logListeners    []task_logger.LogListener
