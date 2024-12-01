@@ -81,6 +81,12 @@ func InteractiveSetup(conf *util.ConfigType) {
 	if conf.TelegramAlert {
 		askValue("Telegram bot token (you can get it from @BotFather)", "", &conf.TelegramToken)
 		askValue("Telegram chat ID", "", &conf.TelegramChat)
+		askValue("Telegram API base url", "https://api.telegram.org", &conf.TelegramApiUrl)
+		telegramBotProxy := false
+		askConfirmation("Enable telegram bot proxy?", false, &telegramBotProxy)
+		if telegramBotProxy {
+			askValue("Telegram Proxy", "", &conf.TelegramProxy)
+		}
 	}
 
 	askConfirmation("Enable slack alerts?", false, &conf.SlackAlert)
