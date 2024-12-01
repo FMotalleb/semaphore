@@ -76,17 +76,16 @@ func InteractiveSetup(conf *util.ConfigType) {
 		askValue("Mail server port", "25", &conf.EmailPort)
 		askValue("Mail sender address", "semaphore@localhost", &conf.EmailSender)
 	}
-
+	telegramBotProxy := false
+	
+	if proxy:=false;askConfirmation("Enable telegram bot proxy?", false, &telegramBotProxy);proxy {
+		askValue("Telegram Proxy", "", &conf.TelegramProxy)
+	}
 	askConfirmation("Enable telegram alerts?", false, &conf.TelegramAlert)
 	if conf.TelegramAlert {
 		askValue("Telegram bot token (you can get it from @BotFather)", "", &conf.TelegramToken)
 		askValue("Telegram chat ID", "", &conf.TelegramChat)
 		askValue("Telegram API base url", "https://api.telegram.org", &conf.TelegramApiUrl)
-		telegramBotProxy := false
-		askConfirmation("Enable telegram bot proxy?", false, &telegramBotProxy)
-		if telegramBotProxy {
-			askValue("Telegram Proxy", "", &conf.TelegramProxy)
-		}
 	}
 
 	askConfirmation("Enable slack alerts?", false, &conf.SlackAlert)
