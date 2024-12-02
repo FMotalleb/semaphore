@@ -76,6 +76,12 @@ func InteractiveSetup(conf *util.ConfigType) {
 		askValue("Mail server port", "25", &conf.EmailPort)
 		askValue("Mail sender address", "semaphore@localhost", &conf.EmailSender)
 	}
+	enableWebhookAlert := false
+	askConfirmation("Enable Webhook alerts?", false, &enableWebhookAlert)
+	if enableWebhookAlert {
+		askValue("WebHook Address", "", &conf.AlertWebHookAddress)
+		askValue("WebHook Headers (json)", "{}", &conf.AlertWebHookHeaders)
+	}
 	enableProxy := false
 	askConfirmation("Enable messenger proxy (telegram, slack, teams,...)", false, &enableProxy)
 	if enableProxy {
