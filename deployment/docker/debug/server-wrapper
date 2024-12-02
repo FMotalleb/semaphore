@@ -73,29 +73,29 @@ file_env 'SEMAPHORE_ACCESS_KEY_ENCRYPTION'
 
 # Check if $SEMAPHORE_DB_HOST contains port number.
 case "$SEMAPHORE_DB_HOST" in
-  *:*)
+*:*)
     SEMAPHORE_DB_PORT=$(echo "$SEMAPHORE_DB_HOST" | cut -d ':' -f 2)
     SEMAPHORE_DB_HOST=$(echo "$SEMAPHORE_DB_HOST" | cut -d ':' -f 1)
     ;;
-  *)
+*) ;;
 esac
 
 # Ping database if it is not BoltDB
 if [ "${SEMAPHORE_DB_DIALECT}" != 'bolt' ]; then
-  echoerr "Attempting to connect to database ${SEMAPHORE_DB} on ${SEMAPHORE_DB_HOST}:${SEMAPHORE_DB_PORT} with user ${SEMAPHORE_DB_USER} ..."
-  TIMEOUT=30
+    echoerr "Attempting to connect to database ${SEMAPHORE_DB} on ${SEMAPHORE_DB_HOST}:${SEMAPHORE_DB_PORT} with user ${SEMAPHORE_DB_USER} ..."
+    TIMEOUT=30
 
-  while ! $(nc -z "$SEMAPHORE_DB_HOST" "$SEMAPHORE_DB_PORT") >/dev/null 2>&1; do
-      TIMEOUT=$(expr $TIMEOUT - 1)
+    while ! $(nc -z "$SEMAPHORE_DB_HOST" "$SEMAPHORE_DB_PORT") >/dev/null 2>&1; do
+        TIMEOUT=$(expr $TIMEOUT - 1)
 
-      if [ $TIMEOUT -eq 0 ]; then
-          echoerr "Could not connect to database server. Exiting."
-          exit 1
-      fi
+        if [ $TIMEOUT -eq 0 ]; then
+            echoerr "Could not connect to database server. Exiting."
+            exit 1
+        fi
 
-      echo -n "."
-      sleep 1
-  done
+        echo -n "."
+        sleep 1
+    done
 fi
 
 if [ -n "${SEMAPHORE_DB_PORT}" ]; then
@@ -103,34 +103,34 @@ if [ -n "${SEMAPHORE_DB_PORT}" ]; then
 fi
 
 case ${SEMAPHORE_DB_DIALECT} in
-    mysql)
-        SEMAPHORE_DB_DIALECT_ID=1
-        ;;
-    bolt)
-        SEMAPHORE_DB_DIALECT_ID=2
-        SEMAPHORE_DB_HOST=${SEMAPHORE_DB_PATH}/database.boltdb
-        ;;
-    postgres)
-        SEMAPHORE_DB_DIALECT_ID=3
-        ;;
-    *)
-        echoerr "Unknown database dialect: ${SEMAPHORE_DB_DIALECT}"
-        exit 1
-        ;;
+mysql)
+    SEMAPHORE_DB_DIALECT_ID=1
+    ;;
+bolt)
+    SEMAPHORE_DB_DIALECT_ID=2
+    SEMAPHORE_DB_HOST=${SEMAPHORE_DB_PATH}/database.boltdb
+    ;;
+postgres)
+    SEMAPHORE_DB_DIALECT_ID=3
+    ;;
+*)
+    echoerr "Unknown database dialect: ${SEMAPHORE_DB_DIALECT}"
+    exit 1
+    ;;
 esac
 
 if [ ! -f "${SEMAPHORE_CONFIG_PATH}/config.json" ]; then
     echoerr "Generating ${SEMAPHORE_TMP_PATH}/config.stdin ..."
-    cat << EOF > "${SEMAPHORE_TMP_PATH}/config.stdin"
+    cat <<EOF >"${SEMAPHORE_TMP_PATH}/config.stdin"
 ${SEMAPHORE_DB_DIALECT_ID}
 EOF
 
     if [ "${SEMAPHORE_DB_DIALECT}" = "bolt" ]; then
-        cat << EOF >> "${SEMAPHORE_TMP_PATH}/config.stdin"
+        cat <<EOF >>"${SEMAPHORE_TMP_PATH}/config.stdin"
 ${SEMAPHORE_DB_HOST}
 EOF
     else
-        cat << EOF >> "${SEMAPHORE_TMP_PATH}/config.stdin"
+        cat <<EOF >>"${SEMAPHORE_TMP_PATH}/config.stdin"
 ${SEMAPHORE_DB_HOST}
 ${SEMAPHORE_DB_USER}
 ${SEMAPHORE_DB_PASS}
@@ -138,9 +138,10 @@ ${SEMAPHORE_DB}
 EOF
     fi
 
-    cat << EOF >> "${SEMAPHORE_TMP_PATH}/config.stdin"
+    cat <<EOF >>"${SEMAPHORE_TMP_PATH}/config.stdin"
 ${SEMAPHORE_TMP_PATH}
 ${SEMAPHORE_WEB_ROOT:-}
+no
 no
 no
 no
@@ -150,7 +151,7 @@ ${SEMAPHORE_LDAP_ACTIVATED}
 EOF
 
     if [ "${SEMAPHORE_LDAP_ACTIVATED}" = "yes" ]; then
-        cat << EOF >> "${SEMAPHORE_TMP_PATH}/config.stdin"
+        cat <<EOF >>"${SEMAPHORE_TMP_PATH}/config.stdin"
 ${SEMAPHORE_LDAP_HOST}:${SEMAPHORE_LDAP_PORT}
 ${SEMAPHORE_LDAP_NEEDTLS:-no}
 ${SEMAPHORE_LDAP_DN_BIND}
@@ -162,9 +163,9 @@ ${SEMAPHORE_LDAP_MAPPING_USERNAME}
 ${SEMAPHORE_LDAP_MAPPING_FULLNAME}
 ${SEMAPHORE_LDAP_MAPPING_EMAIL}
 EOF
-    fi;
+    fi
 
-    cat << EOF >> "${SEMAPHORE_TMP_PATH}/config.stdin"
+    cat <<EOF >>"${SEMAPHORE_TMP_PATH}/config.stdin"
 ${SEMAPHORE_CONFIG_PATH}
 ${SEMAPHORE_ADMIN}
 ${SEMAPHORE_ADMIN_EMAIL}
@@ -174,9 +175,9 @@ EOF
 
     echoerr "Executing semaphore setup"
     if test "$#" -ne 1; then
-        /usr/local/bin/semaphore setup - < "${SEMAPHORE_TMP_PATH}/config.stdin"
+        /usr/local/bin/semaphore setup - <"${SEMAPHORE_TMP_PATH}/config.stdin"
     else
-        "$1" setup - < "${SEMAPHORE_TMP_PATH}/config.stdin"
+        "$1" setup - <"${SEMAPHORE_TMP_PATH}/config.stdin"
     fi
 fi
 
