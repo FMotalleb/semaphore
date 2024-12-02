@@ -123,4 +123,10 @@ export const APP_INVENTORY_TITLE = {
   tofu: 'OpenTofu Workspace',
 };
 
+export const APP_INVENTORY_TYPES = {
+  ansible: ['static', 'file', 'static-yaml'],
+  terraform: ['terraform-workspace'],
+  tofu: ['terraform-workspace'],
+};
+
 export const DEFAULT_APPS = Object.keys(APP_ICONS);

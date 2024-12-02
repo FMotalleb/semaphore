@@ -15,6 +15,7 @@ type DefaultTaskParams struct {
 
 type TerraformTaskParams struct {
 	Plan        bool `json:"plan"`
+	Destroy     bool `json:"destroy"`
 	AutoApprove bool `json:"auto_approve"`
 }
 

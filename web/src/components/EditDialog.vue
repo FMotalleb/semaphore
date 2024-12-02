@@ -21,6 +21,16 @@ Can use used in tandem with ItemFormBase.js. See KeyForm.vue for example.
 
         <v-spacer></v-spacer>
 
+        <v-btn
+          icon
+          @click="toggleHelp()"
+          class="mr-3"
+          :style="{opacity: needHelp ? 1 : 0.3}"
+          v-if="helpButton"
+        >
+          <v-icon>mdi-help-box</v-icon>
+        </v-btn>
+
         <v-btn icon @click="toggleFullscreen()" class="mr-3" v-if="expandable">
           <v-icon>mdi-arrow-{{ fullscreen ? 'collapse' : 'expand' }}</v-icon>
         </v-btn>
@@ -37,6 +47,7 @@ Can use used in tandem with ItemFormBase.js. See KeyForm.vue for example.
           :onError="clearFlags"
           :needSave="needSave"
           :needReset="needReset"
+          :needHelp="needHelp"
         ></slot>
       </v-card-text>
 
@@ -93,6 +104,7 @@ export default {
       type: String,
       default: 'Unnamed',
     },
+    helpButton: Boolean,
   },
 
   data() {
@@ -101,6 +113,7 @@ export default {
       needSave: false,
       needReset: false,
       fullscreen: null,
+      needHelp: false,
     };
   },
 
@@ -133,6 +146,10 @@ export default {
   },
 
   methods: {
+    toggleHelp() {
+      this.needHelp = !this.needHelp;
+    },
+
     onSave(e) {
       if (this.dontCloseOnSave) {
         this.clearFlags();

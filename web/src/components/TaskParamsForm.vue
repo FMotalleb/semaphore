@@ -37,24 +37,43 @@
     </v-row>
   </div>
   <div v-else-if="app === 'terraform' || app === 'tofu'">
-    <v-checkbox
-      class="mt-0"
-      :input-value="params.plan"
-      @change="updateValue('plan', $event)"
-    >
-      <template v-slot:label>
-        <div class="text-no-wrap">{{ $t('Plan') }}</div>
-      </template>
-    </v-checkbox>
-    <v-checkbox
-      class="mt-0"
-      :input-value="params.auto_approve"
-      @change="updateValue('auto_approve', $event)"
-    >
-      <template v-slot:label>
-        <div class="text-no-wrap">{{ $t('Auto Approve') }} <code>-auto-approve</code></div>
-      </template>
-    </v-checkbox>
+    <v-row no-gutters class="mt-6">
+      <v-col cols="12" sm="6">
+        <v-checkbox
+          class="mt-0"
+          :input-value="params.plan"
+          @change="updateValue('plan', $event)"
+        >
+          <template v-slot:label>
+            <div class="text-no-wrap">{{ $t('Plan') }}</div>
+          </template>
+        </v-checkbox>
+      </v-col>
+
+      <v-col cols="12" sm="6">
+        <v-checkbox
+          class="mt-0"
+          :input-value="params.destroy"
+          @change="updateValue('destroy', $event)"
+        >
+          <template v-slot:label>
+            <div class="text-no-wrap">{{ $t('Destroy') }} <code>-destroy</code></div>
+          </template>
+        </v-checkbox>
+      </v-col>
+
+      <v-col cols="12" sm="6">
+        <v-checkbox
+          class="mt-0"
+          :input-value="params.auto_approve"
+          @change="updateValue('auto_approve', $event)"
+        >
+          <template v-slot:label>
+            <div class="text-no-wrap">{{ $t('Auto Approve') }} <code>-auto-approve</code></div>
+          </template>
+        </v-checkbox>
+      </v-col>
+    </v-row>
   </div>
   <div v-else></div>
 </template>
@@ -66,8 +85,8 @@
 <script>
 
 const APP_PARAMS = {
-  terraform: ['plan', 'auto_approve'],
-  tofu: ['plan', 'auto_approve'],
+  terraform: ['plan', 'auto_approve', 'destroy'],
+  tofu: ['plan', 'auto_approve', 'destroy'],
   ansible: ['diff', 'debug', 'dry_run'],
 };
 

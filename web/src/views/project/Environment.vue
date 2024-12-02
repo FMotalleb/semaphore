@@ -6,8 +6,9 @@
       :title="$t('editEnvironment')"
       :max-width="500"
       @save="loadItems"
+      :help-button="true"
     >
-      <template v-slot:form="{ onSave, onError, needSave, needReset }">
+      <template v-slot:form="{ onSave, onError, needSave, needReset, needHelp }">
         <EnvironmentForm
           :project-id="projectId"
           :item-id="itemId"
@@ -15,6 +16,7 @@
           @error="onError"
           :need-save="needSave"
           :need-reset="needReset"
+          :need-help="needHelp"
         />
       </template>
     </EditDialog>

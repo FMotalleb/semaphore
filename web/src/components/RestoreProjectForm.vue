@@ -59,7 +59,7 @@ export default {
     },
 
     getItemsUrl() {
-      return '/api/project/restore';
+      return '/api/projects/restore';
     },
   },
 };
