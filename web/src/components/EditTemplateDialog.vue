@@ -26,11 +26,6 @@
     </template>
   </EditDialog>
 </template>
-
-<style scoped lang="scss">
-
-</style>
-
 <script>
 
 import TemplateForm from './TemplateForm.vue';
@@ -62,7 +57,7 @@ const TERRAFORM_FIELDS = {
     optional: true,
   },
   inventory: {
-    label: 'Default Workspace',
+    label: 'Workspace (Optional)',
   },
   vault: undefined,
 };

@@ -36,6 +36,11 @@ const (
 	SurveyVarEnum TemplateType = "enum"
 )
 
+type TerraformTemplateParams struct {
+	AllowDestroy     bool `json:"allow_destroy"`
+	AllowAutoApprove bool `json:"allow_auto_approve"`
+}
+
 type SurveyVarEnumValue struct {
 	Name  string `json:"name" backup:"name"`
 	Value string `json:"value" backup:"value"`

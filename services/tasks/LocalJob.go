@@ -238,6 +238,16 @@ func (t *LocalJob) getTerraformArgs(username string, incomingVersion *string) (a
 		return
 	}
 
+	var params db.TerraformTaskParams
+	err = t.Task.GetParams(&params)
+	if err != nil {
+		return
+	}
+
+	if params.Destroy {
+		args = append(args, "-destroy")
+	}
+
 	for name, value := range extraVars {
 		if name == "semaphore_vars" {
 			continue

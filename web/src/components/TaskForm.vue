@@ -94,6 +94,7 @@
     <ArgsPicker
       v-if="template.allow_override_args_in_task"
       :vars="args"
+      title="CLI args"
       @change="setArgs"
     />
 
