@@ -18,6 +18,10 @@
       :can-update-project="true"
     />
 
+    <h2 class="ml-7 mt-8 mb-1">General</h2>
+
+    <v-divider class="mb-8" />
+
     <div class="project-settings-form">
       <div style="height: 300px;">
         <ProjectForm :item-id="projectId" ref="form" @error="onError" @save="onSave"/>
@@ -27,6 +31,8 @@
         <v-btn color="primary" @click="saveProject()">{{ $t('save') }}</v-btn>
       </div>
     </div>
+
+    <h2 class="ml-7 mt-8 mb-1">Danger Zone</h2>
 
     <v-divider class="mb-8" />
 
@@ -83,13 +89,13 @@
   @import '~vuetify/src/styles/styles.sass';
 
   .project-settings-form {
-    max-width: 400px;
-    margin: 40px auto;
+    max-width: 600px;
+    margin: 30px;
   }
 
   .project-settings-button {
-    max-width: 400px;
-    margin: 20px auto auto;
+    //max-width: 400px;
+    margin: 30px;
 
     @media #{map-get($display-breakpoints, 'sm-and-down')} {
       padding: 0 6px;

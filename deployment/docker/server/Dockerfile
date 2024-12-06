@@ -25,7 +25,7 @@ RUN --mount=type=cache,target=/go/pkg \
 
 
 ENV OPENTOFU_VERSION="1.7.0"
-ENV TERRAFORM_VERSION="1.10.0"
+ENV TERRAFORM_VERSION="1.10.1"
 #ENV PULUMI_VERSION="3.116.1"
 
 RUN wget https://github.com/opentofu/opentofu/releases/download/v${OPENTOFU_VERSION}/tofu_${OPENTOFU_VERSION}_linux_${TARGETARCH}.tar.gz && \
@@ -49,7 +49,7 @@ FROM alpine:3.19
 
 ARG TARGETARCH="amd64"
 # renovate: datasource=pypi depName=ansible
-ENV ANSIBLE_VERSION 11.0.0
+ENV ANSIBLE_VERSION 11.1.0
 ARG ANSIBLE_VENV_PATH=/opt/semaphore/apps/ansible/${ANSIBLE_VERSION}/venv
 
 RUN apk add --no-cache -U \

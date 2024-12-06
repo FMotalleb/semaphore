@@ -54,7 +54,7 @@ WORKDIR /home/semaphore
 USER 1001
 
 # renovate: datasource=pypi depName=ansible
-ENV ANSIBLE_VERSION 11.0.0
+ENV ANSIBLE_VERSION 11.1.0
 
 RUN mkdir /opt/semaphore/venv
 

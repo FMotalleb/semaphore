@@ -417,22 +417,17 @@ func (t *LocalJob) getPlaybookArgs(username string, incomingVersion *string) (ar
 
 func (t *LocalJob) Run(username string, incomingVersion *string) (err error) {
 
+	defer func() {
+		t.destroyKeys()
+		t.destroyInventoryFile()
+	}()
+
 	t.SetStatus(task_logger.TaskRunningStatus) // It is required for local mode. Don't delete
 
 	environmentVariables, err := t.getEnvironmentENV()
 	if err != nil {
 		return
 	}
-
-	err = t.prepareRun(&environmentVariables)
-	if err != nil {
-		return err
-	}
-
-	defer func() {
-		t.destroyKeys()
-		t.destroyInventoryFile()
-	}()
 
 	var args []string
 	var inputs map[string]string
@@ -458,6 +453,11 @@ func (t *LocalJob) Run(username string, incomingVersion *string) (err error) {
 
 	if err != nil {
 		return
+	}
+
+	err = t.prepareRun(&environmentVariables, params)
+	if err != nil {
+		return err
 	}
 
 	if t.Inventory.SSHKey.Type == db.AccessKeySSH && t.Inventory.SSHKeyID != nil {
@@ -493,7 +493,8 @@ func (t *LocalJob) Run(username string, incomingVersion *string) (err error) {
 
 }
 
-func (t *LocalJob) prepareRun(environmentVars *[]string) error {
+func (t *LocalJob) prepareRun(environmentVars *[]string, params interface{}) error {
+
 	t.Log("Preparing: " + strconv.Itoa(t.Task.ID))
 
 	if err := checkTmpDir(util.Config.TmpPath); err != nil {
@@ -532,7 +533,7 @@ func (t *LocalJob) prepareRun(environmentVars *[]string) error {
 		return err
 	}
 
-	if err := t.App.InstallRequirements(environmentVars); err != nil {
+	if err := t.App.InstallRequirements(environmentVars, params); err != nil {
 		t.Log("Running galaxy failed: " + err.Error())
 		return err
 	}

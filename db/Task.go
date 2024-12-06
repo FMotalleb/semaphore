@@ -3,8 +3,9 @@ package db
 import (
 	"encoding/json"
 	"fmt"
-	"github.com/go-gorp/gorp/v3"
 	"time"
+
+	"github.com/go-gorp/gorp/v3"
 
 	"github.com/semaphoreui/semaphore/pkg/task_logger"
 	"github.com/semaphoreui/semaphore/util"
@@ -17,6 +18,7 @@ type TerraformTaskParams struct {
 	Plan        bool `json:"plan"`
 	Destroy     bool `json:"destroy"`
 	AutoApprove bool `json:"auto_approve"`
+	Upgrade     bool `json:"upgrade"`
 }
 
 type AnsibleTaskParams struct {

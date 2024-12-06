@@ -84,8 +84,15 @@ func (t *TerraformApp) SetLogger(logger task_logger.Logger) task_logger.Logger {
 	return logger
 }
 
-func (t *TerraformApp) init(environmentVars *[]string) error {
-	cmd := t.makeCmd(t.Name, []string{"init"}, environmentVars)
+func (t *TerraformApp) init(environmentVars *[]string, params *db.TerraformTaskParams) error {
+
+	args := []string{"init"}
+
+	if params.Upgrade {
+		args = append(args, "-upgrade")
+	}
+
+	cmd := t.makeCmd(t.Name, args, environmentVars)
 	t.Logger.LogCmd(cmd)
 	err := cmd.Start()
 	if err != nil {
@@ -116,8 +123,11 @@ func (t *TerraformApp) selectWorkspace(workspace string, environmentVars *[]stri
 	return cmd.Wait()
 }
 
-func (t *TerraformApp) InstallRequirements(environmentVars *[]string) (err error) {
-	err = t.init(environmentVars)
+func (t *TerraformApp) InstallRequirements(environmentVars *[]string, params interface{}) (err error) {
+
+	p := params.(*db.TerraformTaskParams)
+
+	err = t.init(environmentVars, p)
 	if err != nil {
 		return
 	}

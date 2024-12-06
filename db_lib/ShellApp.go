@@ -75,7 +75,7 @@ func (t *ShellApp) SetLogger(logger task_logger.Logger) task_logger.Logger {
 	return logger
 }
 
-func (t *ShellApp) InstallRequirements(environmentVars *[]string) error {
+func (t *ShellApp) InstallRequirements(environmentVars *[]string, params interface{}) error {
 	return nil
 }
 

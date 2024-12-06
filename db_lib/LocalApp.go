@@ -37,6 +37,6 @@ type LocalAppRunningArgs struct {
 
 type LocalApp interface {
 	SetLogger(logger task_logger.Logger) task_logger.Logger
-	InstallRequirements(environmentVars *[]string) error
+	InstallRequirements(environmentVars *[]string, params interface{}) error
 	Run(args LocalAppRunningArgs) error
 }

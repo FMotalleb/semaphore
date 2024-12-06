@@ -73,6 +73,18 @@
           </template>
         </v-checkbox>
       </v-col>
+
+      <v-col cols="12" sm="6">
+        <v-checkbox
+          class="mt-0"
+          :input-value="params.upgrade"
+          @change="updateValue('upgrade', $event)"
+        >
+          <template v-slot:label>
+            <div class="text-no-wrap">{{ $t('Upgrade') }} <code>-upgrade</code></div>
+          </template>
+        </v-checkbox>
+      </v-col>
     </v-row>
   </div>
   <div v-else></div>
