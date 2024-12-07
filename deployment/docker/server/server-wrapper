@@ -209,6 +209,8 @@ no
 no
 no
 no
+no
+no
 ${SEMAPHORE_LDAP_ACTIVATED}
 EOF
 
