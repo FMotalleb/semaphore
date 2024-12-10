@@ -79,104 +79,32 @@
       </v-btn>
     </v-toolbar>
 
-    <v-container fluid>
-      <v-alert text type="info" class="mb-0 ml-4 mr-4 mb-2" v-if="item.description">
-        {{ item.description }}
-      </v-alert>
-
-      <v-row>
-        <v-col>
-          <v-list subheader>
-            <v-list-item>
-              <v-list-item-icon>
-                <v-icon>mdi-book-play</v-icon>
-              </v-list-item-icon>
-
-              <v-list-item-content>
-                <v-list-item-title>{{ $t('playbook') }}</v-list-item-title>
-                <v-list-item-subtitle>{{ item.playbook }}</v-list-item-subtitle>
-              </v-list-item-content>
-            </v-list-item>
-          </v-list>
-        </v-col>
-        <v-col>
-          <v-list subheader>
-            <v-list-item>
-              <v-list-item-icon>
-                <v-icon>{{ TEMPLATE_TYPE_ICONS[item.type] }}</v-icon>
-              </v-list-item-icon>
-
-              <v-list-item-content>
-                <v-list-item-title>{{ $t('type') }}</v-list-item-title>
-                <v-list-item-subtitle
-                  >{{ $t(TEMPLATE_TYPE_TITLES[item.type]) }}
-                </v-list-item-subtitle>
-              </v-list-item-content>
-            </v-list-item>
-          </v-list>
-        </v-col>
-        <v-col>
-          <v-list subheader>
-            <v-list-item>
-              <v-list-item-icon>
-                <v-icon>mdi-monitor</v-icon>
-              </v-list-item-icon>
-
-              <v-list-item-content>
-                <v-list-item-title>{{ $t('inventory') }}</v-list-item-title>
-                <v-list-item-subtitle>
-                  {{
-                    (
-                      inventory.find((x) => x.id === item.inventory_id) || {
-                        name: '—',
-                      }
-                    ).name
-                  }}
-                </v-list-item-subtitle>
-              </v-list-item-content>
-            </v-list-item>
-          </v-list>
-        </v-col>
-        <v-col>
-          <v-list subheader>
-            <v-list-item>
-              <v-list-item-icon>
-                <v-icon>mdi-code-braces</v-icon>
-              </v-list-item-icon>
-              <v-list-item-content>
-                <v-list-item-title>{{ $t('environment') }}</v-list-item-title>
-                <v-list-item-subtitle>
-                  {{ environment.find((x) => x.id === item.environment_id).name }}
-                </v-list-item-subtitle>
-              </v-list-item-content>
-            </v-list-item>
-          </v-list>
-        </v-col>
-        <v-col>
-          <v-list subheader>
-            <v-list-item>
-              <v-list-item-icon>
-                <v-icon>mdi-git</v-icon>
-              </v-list-item-icon>
-              <v-list-item-content>
-                <v-list-item-title>{{ $t('repository2') }}</v-list-item-title>
-                <v-list-item-subtitle>
-                  {{ repositories.find((x) => x.id === item.repository_id).name }}
-                </v-list-item-subtitle>
-              </v-list-item-content>
-            </v-list-item>
-          </v-list>
-        </v-col>
-      </v-row>
-    </v-container>
-
-    <v-tabs show-arrows class="pl-4">
-      <v-tab key="tasks">{{ $t('tasks') }} </v-tab>
-
-      <v-tab v-if="app === 'terraform' || app === 'tofu'" key="state">{{ $t('state') }}</v-tab>
+    <v-tabs class="ml-4">
+      <v-tab
+        :to="`/project/${item.project_id}${
+          $route.params.viewId ? `/views/${$route.params.viewId}` : ''
+        }/templates/${item.id}/tasks`">Tasks</v-tab>
+      <v-tab
+        :to="`/project/${item.project_id}${
+          $route.params.viewId ? `/views/${$route.params.viewId}` : ''
+        }/templates/${item.id}/details`">Details</v-tab>
+      <v-tab
+        v-if="['terraform', 'tofu'].includes(item.app)"
+        :to="`/project/${item.project_id}${
+          $route.params.viewId ? `/views/${$route.params.viewId}` : ''
+        }/templates/${item.id}/state`"
+      >
+        State
+        <v-icon class="ml-1" large color="hsl(348deg, 86%, 61%)">mdi-professional-hexagon</v-icon>
+      </v-tab>
     </v-tabs>
-
-    <TaskList :template="item" />
+    <router-view
+      :template="item"
+      :inventory="inventory"
+      :environment="environment"
+      :repositories="repositories"
+      :premium-features="premiumFeatures"
+    ></router-view>
   </div>
 </template>
 <script>
@@ -184,7 +112,6 @@ import axios from 'axios';
 import EventBus from '@/event-bus';
 import { getErrorMessage } from '@/lib/error';
 import YesNoDialog from '@/components/YesNoDialog.vue';
-import TaskList from '@/components/TaskList.vue';
 import {
   TEMPLATE_TYPE_ACTION_TITLES,
   TEMPLATE_TYPE_ICONS,
@@ -199,7 +126,6 @@ import PermissionsCheck from '@/components/PermissionsCheck';
 export default {
   components: {
     YesNoDialog,
-    TaskList,
     ObjectRefsDialog,
     NewTaskDialog,
     EditTemplateDialogue,
@@ -208,6 +134,7 @@ export default {
   props: {
     projectId: Number,
     userPermissions: Number,
+    premiumFeatures: Object,
   },
 
   mixins: [PermissionsCheck],

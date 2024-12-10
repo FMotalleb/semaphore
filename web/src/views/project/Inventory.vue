@@ -189,6 +189,7 @@ export default {
         sortable: false,
       }];
     },
+
     getItemsUrl() {
       return `/api/project/${this.projectId}/inventory`;
     },

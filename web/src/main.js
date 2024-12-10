@@ -2,6 +2,8 @@ import Vue from 'vue';
 import moment from 'moment';
 import axios from 'axios';
 import { AnsiUp } from 'ansi_up';
+import { Line, Bar } from 'vue-chartjs/legacy';
+
 import App from './App.vue';
 import router from './router';
 import vuetify from './plugins/vuetify';
@@ -81,6 +83,9 @@ Vue.filter('formatMilliseconds', (value) => {
   }
   return moment.duration(duration, 'milliseconds').humanize();
 });
+
+Vue.component('LineChartGenerator', Line);
+Vue.component('BarChartGenerator', Bar);
 
 new Vue({
   router,

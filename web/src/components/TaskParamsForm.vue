@@ -62,7 +62,7 @@
         </v-checkbox>
       </v-col>
 
-      <v-col cols="12" sm="6">
+      <v-col cols="12">
         <v-checkbox
           class="mt-0"
           :input-value="params.auto_approve"

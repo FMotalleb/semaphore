@@ -3,7 +3,9 @@ package bolt
 import (
 	"bytes"
 	"encoding/json"
+	"errors"
 	"fmt"
+	"github.com/semaphoreui/semaphore/pkg/task_logger"
 	"reflect"
 	"sort"
 	"strings"
@@ -816,6 +818,88 @@ func (d *BoltDb) isObjectInUse(bucketID int, objProps db.ObjectProps, objID obje
 	}
 
 	inUse = referringObjects.Elem().Len() > 0
+
+	return
+}
+
+var ErrEndOfRange = errors.New("end of range")
+
+func (d *BoltDb) GetTaskStats(projectID int, templateID *int, unit db.TaskStatUnit, filter db.TaskFilter) (stats []db.TaskStat, err error) {
+
+	if unit != db.TaskStatUnitDay {
+		err = fmt.Errorf("only day unit is supported")
+		return
+	}
+
+	stats = make([]db.TaskStat, 0)
+
+	err = d.db.View(func(tx *bbolt.Tx) error {
+
+		b := tx.Bucket(makeBucketId(db.TaskProps, 0))
+		var c enumerable
+		if b == nil {
+			c = emptyEnumerable{}
+		} else {
+			c = b.Cursor()
+		}
+
+		var date string
+		var stat *db.TaskStat
+
+		err2 := apply(c, db.TaskProps, db.RetrieveQueryParams{}, func(i interface{}) bool {
+			task := i.(db.Task)
+
+			if task.ProjectID != projectID {
+				return false
+			}
+
+			if templateID != nil && task.TemplateID != *templateID {
+				return false
+			}
+
+			if filter.End != nil && task.Created.After(*filter.End) {
+				return false
+			}
+
+			if filter.UserID != nil && (task.UserID == nil || *task.UserID != *filter.UserID) {
+				return false
+			}
+
+			return true
+		}, func(i interface{}) error {
+
+			task := i.(db.Task)
+
+			created := task.Created.Format("2006-01-02")
+
+			if created < filter.Start.Format("2006-01-02") {
+				return ErrEndOfRange
+			}
+
+			if date != created {
+				date = created
+				stat = &db.TaskStat{
+					Date:          date,
+					CountByStatus: make(map[task_logger.TaskStatus]int),
+				}
+				stats = append(stats, *stat)
+			}
+
+			if _, ok := stat.CountByStatus[task.Status]; !ok {
+				stat.CountByStatus[task.Status] = 0
+			}
+
+			stat.CountByStatus[task.Status]++
+
+			return nil
+		})
+
+		if errors.Is(err2, ErrEndOfRange) {
+			return nil
+		}
+
+		return err2
+	})
 
 	return
 }

@@ -42,12 +42,9 @@ module.exports = {
       node: {
         extensions: ['.js', '.vue'],
       },
-      'import/internal-regex': '^@',
-      'import/resolver': {
-        alias: {
-          map: ['@', './src'],
-          extensions: ['.vue', '.js'],
-        },
+      alias: {
+        map: ['@', './src'],
+        extensions: ['.vue', '.js'],
       },
     },
   },

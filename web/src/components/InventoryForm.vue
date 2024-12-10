@@ -149,11 +149,23 @@ export default {
     return {
       cmOptions: {
         tabSize: 2,
+        indentUnit: 2,
         mode: 'text/x-ini',
         lineNumbers: true,
         line: true,
         lint: true,
         indentWithTabs: false,
+        extraKeys: {
+          Tab(cm) {
+            // If something is selected, indent that selection
+            if (cm.somethingSelected()) {
+              cm.indentSelection('add');
+            } else {
+              // Otherwise, insert two spaces at the cursor
+              cm.replaceSelection('  ', 'end');
+            }
+          },
+        },
       },
       inventoryTypes: [{
         id: 'static',

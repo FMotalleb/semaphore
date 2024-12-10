@@ -317,6 +317,7 @@ func Route() *mux.Router {
 	projectTmplManagement.HandleFunc("/{template_id}/tasks", projects.GetAllTasks).Methods("GET")
 	projectTmplManagement.HandleFunc("/{template_id}/tasks/last", projects.GetLastTasks).Methods("GET")
 	projectTmplManagement.HandleFunc("/{template_id}/schedules", projects.GetTemplateSchedules).Methods("GET")
+	projectTmplManagement.HandleFunc("/{template_id}/stats", projects.GetTaskStats).Methods("GET")
 
 	projectTaskManagement := projectUserAPI.PathPrefix("/tasks").Subrouter()
 	projectTaskManagement.Use(projects.GetTaskMiddleware)
@@ -503,7 +504,8 @@ func getSystemInfo(w http.ResponseWriter, r *http.Request) {
 		"use_remote_runner": util.Config.UseRemoteRunner,
 
 		"premium_features": map[string]bool{
-			"project_runners": false,
+			"project_runners":   false,
+			"terraform_backend": false,
 		},
 	}
 
