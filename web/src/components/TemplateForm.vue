@@ -312,11 +312,12 @@ import {
   TEMPLATE_TYPE_ICONS,
   TEMPLATE_TYPE_TITLES,
   APP_INVENTORY_TYPES,
-} from '../lib/constants';
+} from '@/lib/constants';
+import AppFieldsMixin from '@/components/AppFieldsMixin';
 import SurveyVars from './SurveyVars';
 
 export default {
-  mixins: [ItemFormBase],
+  mixins: [ItemFormBase, AppFieldsMixin],
 
   components: {
     TemplateVaults,
@@ -326,7 +327,6 @@ export default {
 
   props: {
     sourceItemId: Number,
-    fields: Object,
     app: String,
   },
 
@@ -397,6 +397,7 @@ export default {
   },
 
   computed: {
+
     isLoaded() {
       if (this.isNew && this.sourceItemId == null) {
         return true;
@@ -418,18 +419,6 @@ export default {
   methods: {
     setArgs(args) {
       this.args = args;
-    },
-
-    fieldLabel(f) {
-      return this.$t((this.fields[f] || { label: f }).label);
-    },
-
-    needField(f) {
-      return this.fields[f] != null;
-    },
-
-    isFieldRequired(f) {
-      return this.fields[f] != null && !this.fields[f].optional;
     },
 
     setSurveyVars(v) {

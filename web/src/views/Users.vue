@@ -42,6 +42,8 @@
       >{{ $t('newUser') }}</v-btn>
     </v-toolbar>
 
+    <v-divider />
+
     <v-data-table
       :headers="headers"
       :items="items"

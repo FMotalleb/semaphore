@@ -16,6 +16,7 @@ type runningJob struct {
 	status     task_logger.TaskStatus
 	logRecords []LogRecord
 	job        *tasks.LocalJob
+	commit     *CommitInfo
 
 	statusListeners []task_logger.StatusListener
 	logListeners    []task_logger.LogListener
@@ -60,6 +61,13 @@ func (p *runningJob) LogCmd(cmd *exec.Cmd) {
 
 	go p.logPipe(bufio.NewReader(stderr))
 	go p.logPipe(bufio.NewReader(stdout))
+}
+
+func (p *runningJob) SetCommit(hash, message string) {
+	p.commit = &CommitInfo{
+		Hash:    hash,
+		Message: message,
+	}
 }
 
 func (p *runningJob) SetStatus(status task_logger.TaskStatus) {

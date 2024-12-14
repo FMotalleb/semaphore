@@ -4,7 +4,7 @@
       type="info"
       text
       color="hsl(348deg, 86%, 61%)"
-      style="border-radius: 0;"
+      style="border-radius: 0; margin-top: -32px;"
       v-if="!premiumFeatures.terraform_backend"
     >
       Terraform/OpenTofu HTTP backend available only in <b>PRO</b> version.

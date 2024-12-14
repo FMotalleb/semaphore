@@ -57,4 +57,6 @@ type Logger interface {
 	SetStatus(status TaskStatus)
 	AddStatusListener(l StatusListener)
 	AddLogListener(l LogListener)
+	
+	SetCommit(hash, message string)
 }

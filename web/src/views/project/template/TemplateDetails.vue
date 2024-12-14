@@ -2,8 +2,8 @@
   <v-container fluid class="pb-0">
     <v-alert
       text
-      type="info"
-      class="mb-0 ml-4 mr-4 mb-6"
+      dense
+      class="mb-0 ml-4 mr-4 mb-6 d-inline-block"
       v-if="template.description"
     >{{ template.description }}
     </v-alert>

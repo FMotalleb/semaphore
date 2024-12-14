@@ -98,7 +98,11 @@
         <v-icon class="ml-1" large color="hsl(348deg, 86%, 61%)">mdi-professional-hexagon</v-icon>
       </v-tab>
     </v-tabs>
+
+    <v-divider style="margin-top: -1px;"/>
+
     <router-view
+      class="mt-8"
       :template="item"
       :inventory="inventory"
       :environment="environment"

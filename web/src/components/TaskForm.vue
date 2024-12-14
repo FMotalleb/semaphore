@@ -15,16 +15,20 @@
     <v-alert
       color="blue"
       dark
-      icon="mdi-source-fork"
       dismissible
-      v-model="commitAvailable"
-      prominent
+      dense
+      v-model="hasCommit"
+      class="overflow-hidden mt-2"
     >
       <div
         style="font-weight: bold;"
-      >{{ (item.commit_hash || '').substr(0, 10) }}
+      >
+        <v-icon small>mdi-source-fork</v-icon>
+        {{ (item.commit_hash || '').substr(0, 10) }}
       </div>
-      <div v-if="sourceTask && sourceTask.commit_message">{{ sourceTask.commit_message }}</div>
+      <div v-if="sourceTask && sourceTask.commit_message">
+        {{ sourceTask.commit_message.substring(0, 50) }}
+      </div>
     </v-alert>
 
     <v-select
@@ -88,6 +92,21 @@
       />
     </div>
 
+    <v-select
+      class="mt-3"
+      v-model="inventory_id"
+      :label="fieldLabel('inventory')"
+      :items="inventory"
+      item-value="id"
+      item-text="name"
+      outlined
+      dense
+      required
+      :disabled="formSaving"
+      v-if="needField('inventory')"
+      hide-details
+    ></v-select>
+
     <TaskParamsForm v-if="template.app === 'ansible'" v-model="item.params" :app="template.app" />
     <TaskParamsForm v-else v-model="item.params" :app="template.app" />
 
@@ -105,30 +124,29 @@
 
 import ItemFormBase from '@/components/ItemFormBase';
 import axios from 'axios';
-// import { codemirror } from 'vue-codemirror';
-import 'codemirror/lib/codemirror.css';
-import 'codemirror/mode/vue/vue.js';
-import 'codemirror/addon/lint/json-lint.js';
-import 'codemirror/addon/display/placeholder.js';
 import TaskParamsForm from '@/components/TaskParamsForm.vue';
 import ArgsPicker from '@/components/ArgsPicker.vue';
+import { APP_INVENTORY_TYPES } from '@/lib/constants';
+import AppFieldsMixin from '@/components/AppFieldsMixin';
 
 export default {
-  mixins: [ItemFormBase],
+  mixins: [ItemFormBase, AppFieldsMixin],
+
   props: {
     templateId: Number,
     sourceTask: Object,
   },
+
   components: {
     ArgsPicker,
     TaskParamsForm,
-    // codemirror,
   },
+
   data() {
     return {
       template: null,
       buildTasks: null,
-      commitAvailable: null,
+      hasCommit: null,
       editedEnvironment: null,
       editedSecretEnvironment: null,
       cmOptions: {
@@ -139,31 +157,51 @@ export default {
         lint: true,
         indentWithTabs: false,
       },
-      // advancedOptions: false,
+      inventory: null,
     };
   },
+
   computed: {
     args() {
       return JSON.parse(this.item.arguments || '[]');
+    },
+
+    app() {
+      return this.template.app;
+    },
+
+    inventory_id: {
+      get() {
+        return (this.item || {}).inventory_id || this.template.inventory_id;
+      },
+      set(newValue) {
+        this.item.inventory_id = newValue;
+      },
     },
   },
 
   watch: {
     needReset(val) {
       if (val) {
-        this.item.template_id = this.templateId;
+        if (this.item) {
+          this.item.template_id = this.templateId;
+        }
+        this.inventory = null;
+        this.template = null;
       }
     },
 
     templateId(val) {
-      this.item.template_id = val;
+      if (this.item) {
+        this.item.template_id = val;
+      }
     },
 
     sourceTask(val) {
       this.assignItem(val);
     },
 
-    commitAvailable(val) {
+    hasCommit(val) {
       if (val == null) {
         this.commit_hash = null;
       }
@@ -202,13 +240,14 @@ export default {
 
       this.editedEnvironment = JSON.parse(v.environment || '{}');
       this.editedSecretEnvironment = JSON.parse(v.secret || '{}');
-      this.commitAvailable = v.commit_hash != null;
+      this.hasCommit = v.commit_hash != null;
     },
 
     isLoaded() {
       return this.item != null
         && this.template != null
-        && this.buildTasks != null;
+        && this.buildTasks != null
+        && this.inventory != null;
     },
 
     beforeSave() {
@@ -225,8 +264,6 @@ export default {
         this.item.params = {};
       }
 
-      // this.advancedOptions = this.item.arguments != null;
-
       this.template = (await axios({
         keys: 'get',
         url: `/api/project/${this.projectId}/templates/${this.templateId}`,
@@ -238,6 +275,12 @@ export default {
         url: `/api/project/${this.projectId}/templates/${this.template.build_template_id}/tasks?status=success`,
         responseType: 'json',
       })).data.filter((task) => task.status === 'success') : [];
+
+      this.inventory = (await axios({
+        keys: 'get',
+        url: `/api/project/${this.projectId}/inventory`,
+        responseType: 'json',
+      })).data.filter((i) => (APP_INVENTORY_TYPES[this.app] || []).includes(i.type));
 
       if (this.item.build_task_id == null
         && this.buildTasks.length > 0

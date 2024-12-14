@@ -58,6 +58,16 @@ func (t *TaskRunner) LogCmd(cmd *exec.Cmd) {
 	go t.logPipe(bufio.NewReader(stdout))
 }
 
+func (t *TaskRunner) SetCommit(hash, message string) {
+
+	t.Task.CommitHash = &hash
+	t.Task.CommitMessage = message
+
+	if err := t.pool.store.UpdateTask(t.Task); err != nil {
+		t.panicOnError(err, "Failed to update task commit")
+	}
+}
+
 func (t *TaskRunner) SetStatus(status task_logger.TaskStatus) {
 	if status == t.Task.Status {
 		return

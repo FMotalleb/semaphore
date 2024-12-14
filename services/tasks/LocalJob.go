@@ -53,6 +53,10 @@ func (t *LocalJob) SetStatus(status task_logger.TaskStatus) {
 	t.Logger.SetStatus(status)
 }
 
+func (t *LocalJob) SetCommit(hash, message string) {
+	t.Logger.SetCommit(hash, message)
+}
+
 func (t *LocalJob) getEnvironmentExtraVars(username string, incomingVersion *string) (extraVars map[string]interface{}, err error) {
 
 	extraVars = make(map[string]interface{})
@@ -603,18 +607,16 @@ func (t *LocalJob) checkoutRepository() error {
 
 	// store commit to TaskRunner table
 
-	//commitHash, err := repo.GetLastCommitHash()
-	//
-	//if err != nil {
-	//	return err
-	//}
-	//
-	//commitMessage, _ := repo.GetLastCommitMessage()
-	//
-	//t.task.CommitHash = &commitHash
-	//t.task.CommitMessage = commitMessage
-	//
-	//return t.pool.store.UpdateTask(t.task)
+	commitHash, err := repo.GetLastCommitHash()
+
+	if err != nil {
+		return err
+	}
+
+	commitMessage, _ := repo.GetLastCommitMessage()
+
+	t.SetCommit(commitHash, commitMessage)
+
 	return nil
 }
 

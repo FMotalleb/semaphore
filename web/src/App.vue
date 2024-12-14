@@ -585,10 +585,6 @@
 </template>
 <style lang="scss">
 
-.v-alert__wrapper {
-  overflow: auto;
-}
-
 .v-dialog > .v-card > .v-card__title {
   flex-wrap: nowrap;
   overflow: hidden;
@@ -649,23 +645,38 @@
   height: 64px !important;
 }
 
-.v-data-table-header {
+.v-data-table .v-data-footer {
+  margin-left: 16px !important;
+  margin-right: 16px !important;
 }
 
-.v-data-table > .v-data-table__wrapper > table > thead > tr:last-child > th {
-  text-transform: uppercase;
-  white-space: nowrap;
+.v-data-table__wrapper {
+  padding-left: 16px !important;
+  padding-right: 16px !important;
 }
 
-.v-data-table > .v-data-table__wrapper > table > tbody > tr {
-  background: transparent !important;
+.v-data-table {
+  td:first-child, th:first-child {
+    padding-left: 2px !important;
+  }
+  td:last-child, th:last-child {
+    padding-right: 2px !important;
+  }
 
-  & > td {
+  .v-data-table__wrapper > table > thead > tr:last-child > th {
+    text-transform: uppercase;
     white-space: nowrap;
   }
 
-  & > td:first-child {
-    //font-weight: bold !important;
+  .v-data-table__wrapper > table > tbody > tr {
+    background: transparent !important;
+    &:hover {
+      background-color: rgba(143, 143, 143, 0.04) !important;
+    }
+
+    & > td {
+      white-space: nowrap;
+    }
   }
 }
 
@@ -703,6 +714,12 @@
   }
 }
 
+@import '~vuetify/src/styles/styles.sass';
+@media #{map-get($display-breakpoints, 'xl-only')} {
+  .CenterToScreen {
+    transform: translateX(-130px);
+  }
+}
 </style>
 
 <script>
@@ -894,10 +911,6 @@ export default {
       return this.projects.find((x) => x.id === this.projectId);
     },
 
-    isAuthenticated() {
-      return document.cookie.includes('semaphore=');
-    },
-
     templatesUrl() {
       let viewId = localStorage.getItem(`project${this.projectId}__lastVisitedViewId`);
       if (viewId) {
@@ -911,14 +924,6 @@ export default {
   },
 
   async created() {
-    if (!this.isAuthenticated) {
-      if (this.$route.path !== '/auth/login') {
-        await this.$router.push({ path: '/auth/login' });
-      }
-      this.state = 'success';
-      return;
-    }
-
     if (localStorage.getItem('darkMode') === '1') {
       this.darkMode = true;
     }
@@ -927,6 +932,14 @@ export default {
       await this.loadData();
       this.state = 'success';
     } catch (err) {
+      if (err.response && err.response.status === 401) {
+        if (this.$route.path !== '/auth/login') {
+          await this.$router.push({ path: '/auth/login' });
+        }
+        this.state = 'success';
+        return;
+      }
+
       EventBus.$emit('i-snackbar', {
         color: 'error',
         text: getErrorMessage(err),
@@ -1063,6 +1076,7 @@ export default {
   },
 
   methods: {
+
     async onSubscriptionKeyUpdates() {
       EventBus.$emit('i-snackbar', {
         color: 'success',
@@ -1158,10 +1172,6 @@ export default {
     },
 
     async loadUserInfo() {
-      if (!this.isAuthenticated) {
-        return;
-      }
-
       this.user = (await axios({
         method: 'get',
         url: '/api/user',

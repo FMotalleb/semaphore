@@ -18,70 +18,75 @@
       :can-update-project="true"
     />
 
-    <h2 class="ml-7 mt-8 mb-1">General</h2>
+    <div
+      style="margin: auto; max-width: 600px; padding: 0 16px;"
+      class="CenterToScreen"
+    >
+      <h2 class="mt-8 mb-1">General</h2>
 
-    <v-divider class="mb-8" />
+      <v-divider class="mb-8" />
 
-    <div class="project-settings-form">
-      <div style="height: 300px;">
-        <ProjectForm :item-id="projectId" ref="form" @error="onError" @save="onSave"/>
+      <div class="project-settings-form">
+        <div style="height: 300px;">
+          <ProjectForm :item-id="projectId" ref="form" @error="onError" @save="onSave"/>
+        </div>
+
+        <div class="text-right">
+          <v-btn color="primary" @click="saveProject()">{{ $t('save') }}</v-btn>
+        </div>
       </div>
 
-      <div class="text-right">
-        <v-btn color="primary" @click="saveProject()">{{ $t('save') }}</v-btn>
+      <h2 class="mt-8 mb-1">Danger Zone</h2>
+
+      <v-divider class="mb-8" />
+
+      <div class="project-backup project-settings-button" v-if="projectType === ''">
+
+        <v-row align="center">
+          <v-col class="shrink">
+
+            <v-btn
+              color="primary"
+              @click="backupProject"
+              :disabled="backupProgress"
+              min-width="170"
+            >{{ $t('backup') }}
+            </v-btn>
+
+            <v-progress-linear
+              v-if="backupProgress"
+              color="primary accent-4"
+              indeterminate
+              rounded
+              height="36"
+              style="margin-top: -36px"
+            ></v-progress-linear>
+
+          </v-col>
+          <v-col class="grow">
+            <div style="font-size: 14px;">
+              {{ $t('downloadTheProjectBackupFile') }}
+            </div>
+          </v-col>
+        </v-row>
       </div>
-    </div>
-
-    <h2 class="ml-7 mt-8 mb-1">Danger Zone</h2>
-
-    <v-divider class="mb-8" />
-
-    <div class="project-backup project-settings-button">
-
-      <v-row align="center">
-        <v-col class="shrink">
-
-          <v-btn
-            color="primary"
-            @click="backupProject"
-            :disabled="backupProgress"
-            min-width="170"
-          >{{ $t('backup') }}
-          </v-btn>
-
-          <v-progress-linear
-            v-if="backupProgress"
-            color="primary accent-4"
-            indeterminate
-            rounded
-            height="36"
-            style="margin-top: -36px"
-          ></v-progress-linear>
-
-        </v-col>
-        <v-col class="grow">
-          <div style="font-size: 14px;">
-            {{ $t('downloadTheProjectBackupFile') }}
-          </div>
-        </v-col>
-      </v-row>
-    </div>
-    <div class="project-delete-form project-settings-button">
-      <v-row align="center">
-        <v-col class="shrink">
-          <v-btn
-            color="error"
-            min-width="170"
-            @click="deleteProjectDialog = true"
-          >{{ $t('deleteProject2') }}
-          </v-btn>
-        </v-col>
-        <v-col class="grow">
-          <div style="font-size: 14px; color: #ff5252">
-            {{ $t('onceYouDeleteAProjectThereIsNoGoingBackPleaseBeCer') }}
-          </div>
-        </v-col>
-      </v-row>
+      <div class="project-delete-form project-settings-button">
+        <v-row align="center">
+          <v-col class="shrink">
+            <v-btn
+              color="error"
+              min-width="170"
+              @click="deleteProjectDialog = true"
+            >{{ $t('deleteProject2') }}
+            </v-btn>
+          </v-col>
+          <v-col class="grow">
+            <div style="font-size: 14px; color: #ff5252">
+              {{ $t('onceYouDeleteAProjectThereIsNoGoingBackPleaseBeCer') }}
+            </div>
+          </v-col>
+        </v-row>
+      </div>
     </div>
   </div>
 </template>
@@ -89,13 +94,13 @@
   @import '~vuetify/src/styles/styles.sass';
 
   .project-settings-form {
-    max-width: 600px;
-    margin: 30px;
+    //max-width: 600px;
+    margin: 30px 0;
   }
 
   .project-settings-button {
     //max-width: 400px;
-    margin: 30px;
+    margin: 30px 0;
 
     @media #{map-get($display-breakpoints, 'sm-and-down')} {
       padding: 0 6px;

@@ -199,8 +199,8 @@ type TaskStageType string
 
 const (
 	TaskStageRepositoryClone TaskStageType = "repository_clone"
+	TaskStageScriptRun       TaskStageType = "script_run"
 	TaskStageTerraformPlan   TaskStageType = "terraform_plan"
-	TaskStageTerraformApply  TaskStageType = "terraform_apply"
 )
 
 type TaskStage struct {

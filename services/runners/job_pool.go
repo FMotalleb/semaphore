@@ -250,6 +250,7 @@ func (p *JobPool) sendProgress() {
 			ID:         id,
 			LogRecords: j.logRecords,
 			Status:     j.status,
+			Commit:     j.commit,
 		})
 
 		j.logRecords = make([]LogRecord, 0)
@@ -387,7 +388,7 @@ func (p *JobPool) checkNewJobs() {
 	resp, err := client.Do(req)
 
 	if err != nil {
-		logger.ActionError(err, "send request", "upexpected error")
+		logger.ActionError(err, "send request", "unexpected error")
 		return
 	}
 

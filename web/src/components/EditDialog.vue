@@ -119,8 +119,8 @@ export default {
 
   watch: {
     async dialog(val) {
-      this.$emit('input', val);
       this.needReset = val;
+      this.$emit('input', val);
       if (val) {
         window.addEventListener('keydown', this.handleEscape);
       } else {

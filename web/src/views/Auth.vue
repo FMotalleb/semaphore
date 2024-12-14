@@ -183,8 +183,9 @@ export default {
   },
 
   async created() {
-    if (this.isAuthenticated()) {
+    if (await this.isAuthenticated()) {
       document.location = document.baseURI;
+      return;
     }
     await axios({
       method: 'get',
@@ -207,8 +208,21 @@ export default {
       return pwd;
     },
 
-    isAuthenticated() {
-      return document.cookie.includes('semaphore=');
+    async isAuthenticated() {
+      try {
+        await axios({
+          method: 'get',
+          url: '/api/user',
+          responseType: 'json',
+        });
+      } catch (err) {
+        if (err.response.status === 401) {
+          return false;
+        }
+        throw err;
+      }
+
+      return true;
     },
 
     async signIn() {

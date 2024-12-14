@@ -17,24 +17,23 @@
       :headers="headers"
       :items="items"
       :footer-props="{ itemsPerPageOptions: [20] }"
-      class="mt-4"
+      class="mt-4 HistoryTable"
     >
       <template v-slot:item.tpl_alias="{ item }">
-        <div class="d-flex">
+        <div class="d-flex align-center">
           <v-icon
-              class="mr-3"
-              small
+            class="mr-3"
+            small
           >
             {{ getAppIcon(item.tpl_app) }}
           </v-icon>
 
-          <v-icon class="mr-3" small>
-            {{ TEMPLATE_TYPE_ICONS[item.tpl_type] }}
-          </v-icon>
+          <!--          <v-icon class="mr-3" small>-->
+          <!--            {{ TEMPLATE_TYPE_ICONS[item.tpl_type] }}-->
+          <!--          </v-icon>-->
 
           <TaskLink
             :task-id="item.id"
-            :tooltip="item.message"
             :label="'#' + item.id"
           />
 
@@ -45,6 +44,15 @@
             '/templates/' + item.template_id"
           >{{ item.tpl_alias }}
           </router-link>
+        </div>
+
+        <div style="font-size: 14px;" class="ml-7">
+            <span v-if="item.message">
+              <v-icon x-small>mdi-message-outline</v-icon> {{ item.message }}
+            </span>
+          <span v-else-if="item.commit_hash">
+              <v-icon x-small>mdi-source-fork</v-icon> {{ item.commit_message }}
+            </span>
         </div>
       </template>
 
@@ -84,6 +92,12 @@
     </v-data-table>
   </div>
 </template>
+
+<style lang="scss">
+.HistoryTable td {
+  height: 60px !important;
+}
+</style>
 
 <script>
 import ItemListPageBase from '@/components/ItemListPageBase';
